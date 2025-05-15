@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fast Food Calories + Fruits</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url('background.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #000000;
+      text-shadow: 1px 1px 2px #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+    }
+
+    h1 {
+      margin: 40px 0 20px;
+    }
+
+    .input-container {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .input-container input,
+    .input-container select {
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      background-color: rgba(255, 255, 255, 0.7);
+      color: black;
+    }
+
+    .main-container {
+      display: flex;
+      width: 100%;
+      max-width: 1200px;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 20px;
+      box-sizing: border-box;
+      flex-wrap: wrap;
+    }
+
+    .icons-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icons-group.fast-food,
+    .icons-group.fruits {
+      margin-top: 20vh; 
+    }
+
+    .icons-group h3 {
+      margin-bottom: 10px;
+    }
+
+    .icons-group img {
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .icons-group img.active {
+      transform: scale(1.5);
+    }
+
+    .selected-items {
+      text-align: center;
+    }
+
+    .selected-items img {
+      width: 48px;
+      height: 48px;
+      margin: 5px;
+      opacity: 1;
+      transition: opacity 1s;
+    }
+
+    .button-container {
+      margin-top: 20px;
+    }
+
+    .stats {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    /* Progress Bar Styles */
+    .progress-container {
+      width: 80%;
+      height: 20px;
+      background-color: rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
+      margin: 10px auto;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: #4caf50;
+      transition: width 0.5s ease;
+    }
+
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+
+  <div class="main-container">
+    <!-- Fast Food -->
+    <div class="icons-group fast-food">
+      <h3>Фаст-фуд</h3>
+      <img src="pizza.png" alt="Пицца" data-calories="280" />
+      <img src="cola.png" alt="Кола" data-calories="140" />
+      <img src="energy-drink.png" alt="Энергетик" data-calories="150" />
+      <img src="burger.png" alt="Бургер" data-calories="350" />
+      <img src="fried-chicken.png" alt="Жареная курочка" data-calories="250" />
+      <img src="fried-potatoes.png" alt="Картошка фри" data-calories="200" />
+      <img src="kebab.png" alt="Донер" data-calories="300" />
+    </div>
+
+    <!-- Fruits -->
+    <div class="icons-group fruits">
+      <h3>Жемістер</h3>
+      <img src="apple.png" alt="Алма" data-calories="52" data-vitamins="C" />
+      <img src="banana.png" alt="Банан" data-calories="89" data-vitamins="B6, C" />
+      <img src="orange.png" alt="Апельсин" data-calories="62" data-vitamins="C" />
+      <img src="strawberry.png" alt="Құлпынай" data-calories="33" data-vitamins="C, A" />
+      <img src="grape.png" alt="Жүзім" data-calories="67" data-vitamins="K, C" />
+    </div>
+  </div>
+
+
+  <!-- Input Section for Age, Height, Weight, and Gender -->
+  <div class="input-container">
+    <input type="number" id="age" placeholder="Возраст" />
+    <input type="number" id="height" placeholder="Рост (см)" />
+    <input type="number" id="weight" placeholder="Вес (кг)" />
+    <select id="gender">
+      <option value="">Выберите пол</option>
+      <option value="male">Мужской</option>
+      <option value="female">Женский</option>
+    </select>
+  </div>
+
+
+  <div class="selected-items">
+    <h2>Қортылатын тағамдар:</h2>
+    <div class="items"></div>
+  </div>
+
+  <div class="button-container">
+    <button id="eatButton">Тамақтану</button>
+    <button id="resetButton">Қайтадан бастау</button>
+  </div>
+
+  <div class="stats">
+    <p id="caloriesInfo">Бұл тағамдардан алынған калория: 0</p>
+    <p id="burnInfo">Ол калорияны жағып жіберу үшін:</p>
+    <ul>
+      <li id="walkInfo">Жүру керек: 0 минут</li>
+      <li id="runInfo">Жүгіру керек: 0 минут</li>
+    </ul>
+    <p id="vitaminInfo">Алынған витаминдер: Жоқ</p>
+    <p id="dailyNeed">Сіздің тәуліктік калория нормасы: белгісіз</p>
+
+    <!-- Progress bar -->
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <p id="percentageInfo">Тұтынылған калория: 0%</p>
+  </div>
+
+  <script>
+    const icons = document.querySelectorAll('.icons-group img');
+    const itemsContainer = document.querySelector('.items');
+    const eatButton = document.getElementById('eatButton');
+    const resetButton = document.getElementById('resetButton');
+    const caloriesInfo = document.getElementById('caloriesInfo');
+    const walkInfo = document.getElementById('walkInfo');
+    const runInfo = document.getElementById('runInfo');
+    const vitaminInfo = document.getElementById('vitaminInfo');
+    const dailyNeed = document.getElementById('dailyNeed');
+    const progressBar = document.getElementById('progressBar');
+    const percentageInfo = document.getElementById('percentageInfo');
+
+    let totalCalories = 0;
+    let collectedVitamins = [];
+    let currentBMR = 0;
+
+    const ageInput = document.getElementById('age');
+    const heightInput = document.getElementById('height');
+    const weightInput = document.getElementById('weight');
+    const genderInput = document.getElementById('gender');
+
+    // Calculate BMR based on inputs
+    function calculateBMR() {
+      const age = parseInt(ageInput.value, 10);
+      const height = parseFloat(heightInput.value);
+      const weight = parseFloat(weightInput.value);
+      const gender = genderInput.value;
+
+      if (!age || !height || !weight || !gender) {
+        dailyNeed.textContent = 'Сіздің тәуліктік калория нормасы: белгісіз (барлық деректерді толтырыңыз)';
+        currentBMR = 0;
+        updateProgress();
+        return;
+      }
+
+      if (gender === 'male') {
+        currentBMR = 10 * weight + 6.25 * height - 5 * age + 5;
+      } else {
+        currentBMR = 10 * weight + 6.25 * height - 5 * age - 161;
+      }
+
+      dailyNeed.textContent = `Сіздің тәуліктік калория нормасы: ${Math.round(currentBMR)} ккал`;
+      updateProgress();
+    }
+
+    // Update progress bar based on calories consumed
+    function updateProgress() {
+      if (currentBMR > 0) {
+        const percent = Math.min(Math.round((totalCalories / currentBMR) * 100), 100);
+        progressBar.style.width = `${percent}%`;
+        if (percent > 100) {
+          progressBar.style.backgroundColor = 'red';
+        } else {
+          progressBar.style.backgroundColor = '#4caf50';
+        }
+        percentageInfo.textContent = `Тұтынылған калория: ${percent}%`;
+      } else {
+        progressBar.style.width = '0%';
+        progressBar.style.backgroundColor = '#4caf50';
+        percentageInfo.textContent = 'Тұтынылған калория: 0%';
+      }
+    }
+
+    // Handle icon selection
+    icons.forEach(icon => {
+      icon.addEventListener('click', () => {
+        icon.classList.add('active');
+        setTimeout(() => icon.classList.remove('active'), 1000);
+        const clone = icon.cloneNode();
+        clone.style.opacity = '1';
+        clone.dataset.calories = icon.dataset.calories;
+        if (icon.dataset.vitamins) clone.dataset.vitamins = icon.dataset.vitamins;
+        itemsContainer.appendChild(clone);
+      });
+    });
+
+    // Handle "eat" button click
+    eatButton.addEventListener('click', () => {
+      const items = itemsContainer.querySelectorAll('img');
+      items.forEach((item, index) => {
+        setTimeout(() => {
+          item.style.opacity = '0';
+          totalCalories += parseInt(item.dataset.calories || 0, 10);
+          if (item.dataset.vitamins) {
+            const vitamins = item.dataset.vitamins.split(',').map(v => v.trim());
+            collectedVitamins.push(...vitamins);
+          }
+          if (index === items.length - 1) {
+            updateStats();
+            calculateBMR();
+            itemsContainer.innerHTML = '';
+          }
+        }, index * 500);
+      });
+    });
+
+    // Handle "reset" button click
+    resetButton.addEventListener('click', () => {
+      totalCalories = 0;
+      collectedVitamins = [];
+      itemsContainer.innerHTML = '';
+      updateStats();
+      calculateBMR();
+    });
+
+    // Listen to changes in input fields to recalculate BMR
+    [ageInput, heightInput, weightInput, genderInput].forEach(input => {
+      input.addEventListener('change', calculateBMR);
+    });
+
+    // Update stats when calories and vitamins change
+    function updateStats() {
+      caloriesInfo.textContent = `Бұл тағамдардан алынған калория: ${totalCalories}`;
+      const walkMinutes = Math.round(totalCalories / 5);
+      const runMinutes = Math.round(totalCalories / 10);
+      walkInfo.textContent = `Жүру керек: ${walkMinutes} минут`;
+      runInfo.textContent = `Жүгіру керек: ${runMinutes} минут`;
+
+      const uniqueVitamins = [...new Set(collectedVitamins)];
+      vitaminInfo.textContent = uniqueVitamins.length > 0
+        ? `Алынған витаминдер: ${uniqueVitamins.join(', ')}`
+        : 'Алынған витаминдер: Жоқ';
+
+      updateProgress();
+    }
+  </script>
+</body>
+</html>
